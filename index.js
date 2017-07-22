@@ -20,50 +20,84 @@ var licenses_filenames = [
 ];
 
 /**
- * A crawler function that search <code>package.json</code> file into node_module/ directory.
- * 
- * @param {*} directory name 
+ * NPM File, Bower File...
  */
-var readDirectory = function (dirname){
+var json_files = [
+    "package.json"
+];
 
-    fs.readdirSync(dirname).forEach(file => {
+var only_production_dependencies = false;
 
-        if(file == ".bin") { return; };
+var getProjectDependencies = function () {
 
-        if (file == "package.json") {
-            fs.readFile(dirname+ "/" +file, 'utf8', function (err, data) {
+    /* Read package.json from the project */
+    var contents = fs.readFileSync(json_files[0]);
+
+    /* become package.json => object */
+    var package = JSON.parse(contents);
+
+    var dependencies = [];
+
+    for (var dependency in package.dependencies) {
+        dependencies.push(dependency);
+    }
+
+    if(only_production_dependencies) {
+        return dependencies;
+    }
+   
+
+    for (var dependency in package.devDependencies) {
+        dependencies.push(dependency);
+    }
+
+    /* sort dependencies alphabetically */
+    dependencies.sort((a, b) => {
+        if(a < b) return -1;
+        if(a > b) return 1;
+        return 0;
+    });
+
+    return dependencies;
+};
+
+/**
+ * Recieve a name and return an object {name, version, authors, uri, license}
+ * 
+ * @param {*} name 
+ */
+var getDependencyByName = function (dependency_name) {
+
+    /* Read Package.json from dependency name */
+    var contents = fs.readFileSync("node_modules/" + dependency_name + "/package.json");
+
+    var dependency = JSON.parse(contents);
+
+    return {
+        name : dependency.name,
+        version : dependency.version,
+        authors : dependency.author,
+        uri : dependency.homepage,
+        license: dependency.license
+    };
+};
+
+var main = function() {
+
+    var dependencies = getProjectDependencies();
     
-                if (err) {
-                    return console.error("Error", err);
-                }
+    dependencies.forEach((dependency_name) => {
 
-                var object = JSON.parse(data);
-
-                if (
-                    object.name == "<%= htmlComponentName %>" ||
-                    object.name == "undefined" ||
-                    object.version == "undefined" ||
-                    object.license == "undefined"
-                ) {
-                    return;
-                }
-
-                console.log("Name:", object.name);
-                console.log("Version:", object.version);
-                console.log("License:", object.license);
-                console.log();
-            });
-        }
-
-        try {
-            if(fs.lstatSync(dirname+ "/" +file).isDirectory()) {
-                readDirectory(dirname+ "/" +file);
-            }
-        }
-        catch(e){ return; }
+        var dependency = getDependencyByName(dependency_name);
+        
+        console.log("Name: " + dependency.name);
+        console.log("Version: " + dependency.version);
+        console.log("Authors: " + dependency.author);
+        console.log("Homepage: " + dependency.homepage);
+        console.log("License: " + dependency.license);
+        console.log();
 
     });
 };
 
-
-readDirectory("./node_modules/");
+main();
