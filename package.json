@@ -1,0 +1,26 @@
+{
+  "name": "third-party-licenses-generator",
+  "version": "0.1.0",
+  "description": "An application that generates a text file within all third-party software and its licenses.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MateusGabi/Third-Party-Licenses-Generator.git"
+  },
+  "keywords": [
+    "license",
+    "3",
+    "party",
+    "software",
+    "license"
+  ],
+  "author": "Mateus Gabi <mateusgabimoreira@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MateusGabi/Third-Party-Licenses-Generator/issues"
+  },
+  "homepage": "https://github.com/MateusGabi/Third-Party-Licenses-Generator#readme"
+}
