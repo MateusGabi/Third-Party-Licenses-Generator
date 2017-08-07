@@ -26,6 +26,20 @@ var json_files = [
     "package.json"
 ];
 
+/**
+* Name of the file that 3PLG will be generate on the root
+*/
+var TPLGFile = '3PLG.txt';
+
+/**
+* Greetings text
+*/
+var greetings = "This software was gratefully developed using these third-parties softwares:\n\n";
+
+/**
+* Sometimes, we just want build a 3PLG File with production dependencies or
+* prod + dev dependencies
+*/
 var only_production_dependencies = false;
 
 var getProjectDependencies = function () {
@@ -42,13 +56,10 @@ var getProjectDependencies = function () {
         dependencies.push(dependency);
     }
 
-    if(only_production_dependencies) {
-        return dependencies;
-    }
-
-
-    for (var dependency in package.devDependencies) {
-        dependencies.push(dependency);
+    if(!only_production_dependencies) {
+        for (var dependency in package.devDependencies) {
+            dependencies.push(dependency);
+        }
     }
 
     /* sort dependencies alphabetically */
@@ -82,16 +93,14 @@ var getDependencyByName = function (dependency_name) {
     };
 };
 
-var writeOnFile = function (filename, dependency) {
-    var stream = fs.createWriteStream("my_file.txt");
-    stream.once('open', function(fd) {
-        stream.write(dependency.name + "\n");
-        stream.write(dependency.name + "My second row\n");
-        stream.end();
-    });
-};
-
 var main = function() {
+
+    console.log('\n\n===>>> Starting...\n\n');
+
+    console.log('===>>> Clear 3PLG file...\n\n');
+    fs.writeFile(TPLGFile, "");
+
+    fs.appendFile(TPLGFile, greetings);
 
     var dependencies = getProjectDependencies();
 
@@ -99,15 +108,19 @@ var main = function() {
 
         var dependency = getDependencyByName(dependency_name);
 
-        console.log("Name: " + dependency.name);
-        console.log("Version: " + dependency.version);
-        console.log("Authors: " + dependency.author);
-        console.log("Homepage: " + dependency.homepage);
-        console.log("License: " + dependency.license);
-        console.log();
+        var string = "";
 
-        writeOnFile(filename, dependency);
+        string += dependency.name + '@' + dependency.version + '\n';
+        string += dependency.uri + '\n';
+        string += dependency.license + '\n\n';
 
+        fs.appendFile(TPLGFile, string, function (err) {
+
+            if (err) console.error('ERR', err);
+
+            console.log('Written: ' + dependency.name + '@' + dependency.version);
+
+        });
     });
 };
 

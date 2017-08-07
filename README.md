@@ -4,13 +4,13 @@ Hi, my name is Mateus Gabi and I'm so happy to help you. The 3PLG is only avaibl
 
 ## Install
 
-```npm i third-party-licenses-generator```
+```npm install third-party-licenses-generator --dev```
 
 ## Run
 
-```node .\node_modules\third-party-licenses-generator\index.js > [[filename]]```
+```$ cd app_path && node .\node_modules\third-party-licenses-generator\index.js```
 
-A file named ```filename``` will be created.
+A file named ```3PLG.txt``` will be created in app path.
 
 ## API
 
