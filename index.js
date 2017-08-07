@@ -1,6 +1,6 @@
 /**
  * Attention: My english is not good enough. Sorry.
- * 
+ *
  * @author Mateus Gabi Moreira
  */
 var fs = require('fs');
@@ -45,7 +45,7 @@ var getProjectDependencies = function () {
     if(only_production_dependencies) {
         return dependencies;
     }
-   
+
 
     for (var dependency in package.devDependencies) {
         dependencies.push(dependency);
@@ -63,8 +63,8 @@ var getProjectDependencies = function () {
 
 /**
  * Recieve a name and return an object {name, version, authors, uri, license}
- * 
- * @param {*} name 
+ *
+ * @param {*} name
  */
 var getDependencyByName = function (dependency_name) {
 
@@ -82,20 +82,31 @@ var getDependencyByName = function (dependency_name) {
     };
 };
 
+var writeOnFile = function (filename, dependency) {
+    var stream = fs.createWriteStream("my_file.txt");
+    stream.once('open', function(fd) {
+        stream.write(dependency.name + "\n");
+        stream.write(dependency.name + "My second row\n");
+        stream.end();
+    });
+};
+
 var main = function() {
 
     var dependencies = getProjectDependencies();
-    
+
     dependencies.forEach((dependency_name) => {
 
         var dependency = getDependencyByName(dependency_name);
-        
+
         console.log("Name: " + dependency.name);
         console.log("Version: " + dependency.version);
         console.log("Authors: " + dependency.author);
         console.log("Homepage: " + dependency.homepage);
         console.log("License: " + dependency.license);
         console.log();
+
+        writeOnFile(filename, dependency);
 
     });
 };
